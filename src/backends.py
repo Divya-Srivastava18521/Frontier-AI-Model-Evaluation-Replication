@@ -86,20 +86,57 @@ class HFBackend(BaseBackend):
             return
         try:
             from transformers import pipeline
+            import torch
         except ImportError as e:
             raise RuntimeError(
                 "transformers not installed. Run: pip install transformers torch accelerate"
             ) from e
-        self._pipe = pipeline(
-            "text-generation",
-            model=self.model_id,
-            trust_remote_code=True,
-            device_map="auto",
-        )
+        # Apple Silicon MPS (or CUDA) + fp16 is ~20-50x faster than CPU float32.
+        if torch.backends.mps.is_available():
+            self._pipe = pipeline(
+                "text-generation",
+                model=self.model_id,
+                trust_remote_code=True,
+                device="mps",
+                torch_dtype=torch.float16,
+            )
+        elif torch.cuda.is_available():
+            self._pipe = pipeline(
+                "text-generation",
+                model=self.model_id,
+                trust_remote_code=True,
+                device_map="auto",
+                torch_dtype=torch.float16,
+            )
+        else:
+            self._pipe = pipeline(
+                "text-generation",
+                model=self.model_id,
+                trust_remote_code=True,
+                device_map="auto",
+            )
 
     def generate(self, prompt: str, system: str = "", **kwargs) -> str:
+        import re
+
         self._lazy_load()
-        full = f"{system}\n\n{prompt}" if system else prompt
+        # Strip the harness's internal [id=...] metadata tag: it is only used
+        # by MockBackend for seeded determinism and pollutes real-model prompts
+        # (small models echo the tag format, degrading output).
+        prompt = re.sub(r"\[id=.+?\]\s*", "", prompt)
+        # Use the model's chat template when available: raw-string prompting
+        # severely degrades instruction-tuned models (they expect the
+        # <|im_start|>/<|im_end|> turn format they were trained on).
+        messages = []
+        if system:
+            messages.append({"role": "system", "content": system})
+        messages.append({"role": "user", "content": prompt})
+        try:
+            full = self._pipe.tokenizer.apply_chat_template(
+                messages, tokenize=False, add_generation_prompt=True
+            )
+        except Exception:
+            full = f"{system}\n\n{prompt}" if system else prompt
         out = self._pipe(
             full, max_new_tokens=self.max_new_tokens, do_sample=False, return_full_text=False
         )

@@ -157,13 +157,13 @@
   <div class="badges">
     <span class="badge"><b>150</b>&nbsp;trials</span>
     <span class="badge"><b>50</b>&nbsp;questions · 2 suites · 3 conditions</span>
-    <span class="badge">mock proxy · <b>seed 1</b></span>
+    <span class="badge"><b>Qwen2.5-0.5B-Instruct</b>&nbsp;· real weights · greedy</span>
     <span class="badge">Inspect-style Task harness</span>
     <span class="badge">100% benign &amp; defensive proxies</span>
   </div>
-  <div class="finding"><b>Headline finding →</b> one underperformance instruction wipes out <b>−46.7pp</b> on general
-  QA and <b>−25.0pp</b> on cyber proxies — while CoT + few-shot elicitation recovers <b>past baseline</b>.
-  Black-box point scores understate both the floor and the ceiling.</div>
+  <div class="finding"><b>Headline finding (real model) →</b> one underperformance instruction drops cyber-proxy scores
+  <b>−45.0pp</b> (75% → 30%) but general QA only <b>−16.7pp</b> — selectivity <b>+28.3pp</b>, the risk-relevant
+  pattern. Meanwhile frontier-style elicitation <i>backfires</i> on this 0.5B model (−35pp on cyber).</div>
 </header>
 
 <section id="about">
@@ -221,58 +221,61 @@
 </section>
 
 <section id="results">
-  <h2><span class="n">04</span> 📊 Results <span style="font-size:.82rem;color:var(--muted);font-weight:400">(canonical: mock proxy · seed 1 · n=150)</span></h2>
-  <p class="sec-sub">Accuracy by condition — sandbagging collapses scores; elicitation recovers past baseline. White whiskers show 95% CIs.</p>
+  <h2><span class="n">04</span> 📊 Results <span style="font-size:.82rem;color:var(--muted);font-weight:400">(Qwen2.5-0.5B-Instruct · greedy · max 48 tokens · n=150)</span></h2>
+  <p class="sec-sub">Measured accuracy by condition — sandbagging degrades cyber far more than general; elicitation backfires at this scale. White whiskers show 95% CIs.</p>
   <div class="grid c4">
-    <div class="card metric warn"><div class="metric-num">−46.7pp</div><div class="metric-label">sandbag gap · general_qa<br>73.3% → 26.7%</div></div>
-    <div class="card metric warn"><div class="metric-num">−25.0pp</div><div class="metric-label">sandbag gap · cyber_proxy<br>65.0% → 40.0%</div></div>
-    <div class="card metric good"><div class="metric-num">+20.0pp</div><div class="metric-label">elicit lift · cyber_proxy<br>65.0% → 85.0%</div></div>
-    <div class="card metric"><div class="metric-num">−21.7pp</div><div class="metric-label">selectivity<br>generic prompt drops <i>both</i> suites — no selective hiding</div></div>
+    <div class="card metric warn"><div class="metric-num">−16.7pp</div><div class="metric-label">sandbag gap · general_qa<br>60.0% → 43.3%</div></div>
+    <div class="card metric warn"><div class="metric-num">−45.0pp</div><div class="metric-label">sandbag gap · cyber_proxy<br>75.0% → 30.0%</div></div>
+    <div class="card metric warn"><div class="metric-num">−35.0pp</div><div class="metric-label">elicit effect · cyber_proxy<br>75.0% → 40.0% — CoT+few-shot <i>hurts</i></div></div>
+    <div class="card metric good"><div class="metric-num">+28.3pp</div><div class="metric-label">selectivity<br>cyber degrades far more than general — the risk-relevant pattern</div></div>
   </div>
 
   <div class="chart" style="margin-top:16px">
     <h4>general_qa · n = 30</h4>
     <div class="bar-row"><span class="bar-label"><span class="dot base"></span>baseline</span>
-      <div class="bar-track"><div class="bar-fill base" style="width:73.3%;--d:.05s"></div><div class="ci" style="left:57%;width:33%" title="95% CI [.57, .90]"></div></div><span class="bar-val">73.3%</span></div>
+      <div class="bar-track"><div class="bar-fill base" style="width:60%;--d:.05s"></div><div class="ci" style="left:43%;width:34%" title="95% CI [.43, .77]"></div></div><span class="bar-val">60.0%</span></div>
     <div class="bar-row"><span class="bar-label"><span class="dot sand"></span>sandbag 🐢</span>
-      <div class="bar-track"><div class="bar-fill sand" style="width:26.7%;--d:.2s"></div><div class="ci" style="left:10%;width:33%" title="95% CI [.10, .43]"></div></div><span class="bar-val">26.7%</span></div>
+      <div class="bar-track"><div class="bar-fill sand" style="width:43.3%;--d:.2s"></div><div class="ci" style="left:27%;width:36%" title="95% CI [.27, .63]"></div></div><span class="bar-val">43.3%</span></div>
     <div class="bar-row"><span class="bar-label"><span class="dot elicit"></span>elicit 🚀</span>
-      <div class="bar-track"><div class="bar-fill elicit" style="width:86.7%;--d:.35s"></div><div class="ci" style="left:73%;width:24%" title="95% CI [.73, .97]"></div></div><span class="bar-val">86.7%</span></div>
+      <div class="bar-track"><div class="bar-fill elicit" style="width:43.3%;--d:.35s"></div><div class="ci" style="left:27%;width:33%" title="95% CI [.27, .60]"></div></div><span class="bar-val">43.3%</span></div>
   </div>
   <div class="chart" style="margin-top:14px">
     <h4>cyber_proxy · n = 20</h4>
     <div class="bar-row"><span class="bar-label"><span class="dot base"></span>baseline</span>
-      <div class="bar-track"><div class="bar-fill base" style="width:65%;--d:.05s"></div><div class="ci" style="left:45%;width:40%" title="95% CI [.45, .85]"></div></div><span class="bar-val">65.0%</span></div>
+      <div class="bar-track"><div class="bar-fill base" style="width:75%;--d:.05s"></div><div class="ci" style="left:55%;width:35%" title="95% CI [.55, .90]"></div></div><span class="bar-val">75.0%</span></div>
     <div class="bar-row"><span class="bar-label"><span class="dot sand"></span>sandbag 🐢</span>
-      <div class="bar-track"><div class="bar-fill sand" style="width:40%;--d:.2s"></div><div class="ci" style="left:20%;width:40%" title="95% CI [.20, .60]"></div></div><span class="bar-val">40.0%</span></div>
+      <div class="bar-track"><div class="bar-fill sand" style="width:30%;--d:.2s"></div><div class="ci" style="left:10%;width:40%" title="95% CI [.10, .50]"></div></div><span class="bar-val">30.0%</span></div>
     <div class="bar-row"><span class="bar-label"><span class="dot elicit"></span>elicit 🚀</span>
-      <div class="bar-track"><div class="bar-fill elicit" style="width:85%;--d:.35s"></div><div class="ci" style="left:65%;width:35%" title="95% CI [.65, 1.00]"></div></div><span class="bar-val">85.0%</span></div>
+      <div class="bar-track"><div class="bar-fill elicit" style="width:40%;--d:.35s"></div><div class="ci" style="left:20%;width:40%" title="95% CI [.20, .60]"></div></div><span class="bar-val">40.0%</span></div>
   </div>
 
   <table><tr><th>task / condition</th><th style="text-align:right">n</th><th style="text-align:right">correct</th><th style="text-align:right">accuracy</th><th style="text-align:right">95% CI</th></tr>
-    <tr><td>general_qa / <span class="pill base">baseline</span></td><td class="num">30</td><td class="num">22</td><td class="num">73.33%</td><td class="num">[.57, .90]</td></tr>
-    <tr><td>general_qa / <span class="pill sand">sandbag</span></td><td class="num">30</td><td class="num">8</td><td class="num">26.67%</td><td class="num">[.10, .43]</td></tr>
-    <tr><td>general_qa / <span class="pill elicit">elicit</span></td><td class="num">30</td><td class="num">26</td><td class="num">86.67%</td><td class="num">[.73, .97]</td></tr>
-    <tr><td>cyber_proxy / <span class="pill base">baseline</span></td><td class="num">20</td><td class="num">13</td><td class="num">65.00%</td><td class="num">[.45, .85]</td></tr>
-    <tr><td>cyber_proxy / <span class="pill sand">sandbag</span></td><td class="num">20</td><td class="num">8</td><td class="num">40.00%</td><td class="num">[.20, .60]</td></tr>
-    <tr><td>cyber_proxy / <span class="pill elicit">elicit</span></td><td class="num">20</td><td class="num">17</td><td class="num">85.00%</td><td class="num">[.65, 1.00]</td></tr>
+    <tr><td>general_qa / <span class="pill base">baseline</span></td><td class="num">30</td><td class="num">18</td><td class="num">60.00%</td><td class="num">[.43, .77]</td></tr>
+    <tr><td>general_qa / <span class="pill sand">sandbag</span></td><td class="num">30</td><td class="num">13</td><td class="num">43.33%</td><td class="num">[.27, .63]</td></tr>
+    <tr><td>general_qa / <span class="pill elicit">elicit</span></td><td class="num">30</td><td class="num">13</td><td class="num">43.33%</td><td class="num">[.27, .60]</td></tr>
+    <tr><td>cyber_proxy / <span class="pill base">baseline</span></td><td class="num">20</td><td class="num">15</td><td class="num">75.00%</td><td class="num">[.55, .90]</td></tr>
+    <tr><td>cyber_proxy / <span class="pill sand">sandbag</span></td><td class="num">20</td><td class="num">6</td><td class="num">30.00%</td><td class="num">[.10, .50]</td></tr>
+    <tr><td>cyber_proxy / <span class="pill elicit">elicit</span></td><td class="num">20</td><td class="num">8</td><td class="num">40.00%</td><td class="num">[.20, .60]</td></tr>
   </table>
 
-  <div class="callout"><b>Interpretation:</b> eval scores are highly prompt-malleable — a single underperformance instruction
-  wipes out ~25–47pp, and elicitation recovers past baseline. The <i>generic</i> sandbag prompt drops both
-  suites equally (selectivity −21.7pp), matching the paper's distinction: true <i>selective</i> hiding needs a
-  targeted instruction — the natural next experiment.</div>
-  <div class="callout safe"><b>Honesty note:</b> these numbers come from <code class="inline">MockBackend</code>, a calibrated proxy —
-  not a measured model. They demonstrate the harness end-to-end. Replace with a real open-model run
-  (<code class="inline">--model hf:Qwen/Qwen2.5-0.5B-Instruct</code>) before citing as a finding.</div>
+  <div class="callout"><b>Interpretation:</b> the sandbagging effect replicates on real 0.5B weights — and selectively
+  (+28.3pp selectivity): cyber collapses 45pp while general drops only 17pp. Output analysis shows
+  instruction-induced collapse (cyber/sandbag answers 'A' on all 20 items) rather than strategic reasoning —
+  same eval-score consequence, but no deceptive intent should be claimed at this scale. Second finding:
+  frontier elicitation recipes <i>backfire</i> here (18/20 cyber/elicit outputs copy the few-shot "Final: B" anchor),
+  so elicitation doesn't transfer down in scale naively — governance-relevant for small open models.</div>
+  <div class="callout safe"><b>Provenance:</b> measured on <code class="inline">Qwen2.5-0.5B-Instruct</code> (open weights,
+  greedy decoding, max 48 tokens, MPS fp16) — 150 trials, zero unparseable outputs, fully reproducible via
+  <code class="inline">python run_eval.py --model hf:Qwen/Qwen2.5-0.5B-Instruct --seed 1 --max-new-tokens 48</code>.
+  Raw trials in <code class="inline">results/results.json</code>; prior mock-proxy run in <code class="inline">results_mock_seed1.json</code>.</div>
 </section>
 
 <section id="run">
   <h2><span class="n">05</span> ▶️ Run it yourself</h2>
   <div class="grid c2">
     <div class="card"><h3>Demo (zero deps, offline)</h3><pre>python run_eval.py --model mock --seed 1</pre></div>
-    <div class="card"><h3>Real open model (CPU-ok)</h3><pre>pip install -r requirements.txt
-python run_eval.py --model hf:Qwen/Qwen2.5-0.5B-Instruct</pre></div>
+    <div class="card"><h3>Real open model ✅ (canonical run)</h3><pre>pip install -r requirements.txt
+python run_eval.py --model hf:Qwen/Qwen2.5-0.5B-Instruct --seed 1 --max-new-tokens 48</pre></div>
     <div class="card"><h3>OpenAI-compatible endpoint</h3><pre>export OPENAI_API_KEY=... OPENAI_BASE_URL=...
 python run_eval.py --model openai:gpt-4o-mini</pre></div>
     <div class="card"><h3>Native Inspect</h3><pre>pip install inspect-ai

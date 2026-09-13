@@ -42,9 +42,13 @@ def main() -> None:
     )
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--output", default="results/results.json")
+    ap.add_argument("--max-new-tokens", type=int, default=64,
+                    help="max new tokens per generation (HF backend only)")
     args = ap.parse_args()
 
     backend = make_backend(args.model, seed=args.seed)
+    if hasattr(backend, "max_new_tokens"):
+        backend.max_new_tokens = args.max_new_tokens
     all_trials: list[TrialResult] = []
     for task in args.tasks:
         samples = load_jsonl(TASKS[task])
