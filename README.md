@@ -3,6 +3,9 @@
 A small-scale replication of published frontier-model safety evaluations on an open model,
 built with UK AISI's **Inspect** evaluation pattern (`Task = dataset + solver + scorer`).
 
+🌐 **Live project site:** https://divya-srivastava18521.github.io/Frontier-AI-Model-Evaluation-Replication/ ·
+📄 **Full write-up:** [METHODOLOGY.md](METHODOLOGY.md) · 📊 **Raw results:** [results/results.json](results/results.json)
+
 **Primary source replicated:** van der Weij et al. (2024) *"AI Sandbagging: Language Models can
 Strategically Underperform on Evaluations"* (ICLR 2025) — prompted underperformance +
 selective sandbagging on dangerous-capability vs. general-capability evals.
