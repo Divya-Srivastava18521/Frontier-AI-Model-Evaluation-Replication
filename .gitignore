@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+results/*_tmp.json
+results/*.log
+!results/results.json
+!results/README.md
+.inspect/
+logs/
